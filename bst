@@ -51,6 +51,12 @@ public:
 		}
 	}
 
+	Node<T>* min(Node<T>* root) {
+		while (root->left != NULL)
+			root = root->left;
+		return root;
+	}
+
 	bool search(Node<T>* root, T s) {
 		if (root == NULL)
 			return false;
@@ -63,8 +69,35 @@ public:
 			return search(root->right, s);
 	}
 
-	void del(Node<T>* root, int s) {
-
+	Node<T>* del(Node<T>* root, int s) {
+		if (root == NULL)
+			return root;
+		else if (root->data > s)
+			del(root->left, s);
+		else if (root->data < s)
+			del(root->right, s);
+		else {
+			if (!root->left && !root->right) {
+				delete root;
+				root = NULL;
+				return root;
+			}
+			else if (!root->left) {
+				root = root->right;
+				return root;
+			}
+			else if (!root->right) {
+				Node<T>* temp = root;
+				root = root->left;
+				delete temp;
+				return root;
+			}
+			else if (root->right && root->left) {
+				root = min(root->right);
+				delete min(root->right);
+				return root;
+			}
+		}
 	}
 };
 
@@ -92,4 +125,6 @@ int main() {
 		cout << "FOUND!" << endl;
 	else
 		cout << "NOT FOUND!" << endl;
+	tree.del(tree.root, 4);
+	tree.preorder(tree.root);
 }
