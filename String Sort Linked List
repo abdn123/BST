@@ -1,0 +1,137 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+class Sentence {
+	class Word {
+		string word;
+		string tempword;
+		Word* next;
+		Word* prev;
+	public:
+		Word() :next(NULL), prev(NULL) {}
+		Word(string w) :word(w), tempword(w), next(NULL), prev(NULL) {}
+		friend class Sentence;
+	};
+
+	Word* first;
+	Word* last;
+	Word* temp;
+
+public:
+	Sentence() :first(NULL), last(NULL), temp(NULL) {}
+
+	void addWord(string word)
+	{
+		Word* newWord = new Word(word);
+
+		if (first == NULL)
+		{
+			first = newWord;
+			last = first;
+			return;
+		}
+		if (checkDuplicate(newWord->word)) {
+			delete newWord;
+			return;
+		}
+		temp = last;
+		last->next = newWord;
+		last = last->next;
+		last->prev = temp;
+	}
+
+	bool checkDuplicate(string word) {
+		Word* trav;
+		trav = first;
+		while (trav) {
+			if (trav->word == word)
+				return true;
+			trav = trav->next;
+		}
+		return false;
+	}
+
+	void display()
+	{
+		temp = first;
+		while (temp) {
+			cout << temp->word << endl;
+			temp = temp->next;
+		}
+	}
+
+	void swap(Word* a, Word* b) {
+		string temp = a->word;
+		string tempw = a->tempword;
+		a->word = b->word;
+		a->tempword = b->tempword;
+		b->word = temp;
+		b->tempword = tempw;
+	}
+
+	void sort()
+	{
+		temp = first;
+		Word* temp1;
+
+		temp = first;
+		while (temp)
+		{
+			if ((int)temp->tempword[0] >= 65 && (int)temp->tempword[0] <= 90)
+				temp->tempword[0] += ' ';
+			temp1 = temp->next;
+			while (temp1)
+			{
+				if ((int)temp1->tempword[0] >= 65 && (int)temp1->tempword[0] <= 90)
+					temp1->tempword[0] += ' ';
+				if (temp->tempword > temp1->tempword)
+					swap(temp, temp1);
+				temp1 = temp1->next;
+			}
+			temp = temp->next;
+		}
+	}
+};
+bool isempty(char a)
+{
+	if (a == ' ')
+	{
+		return false;
+	}
+	return true;
+}
+
+int main() {
+
+	Sentence s1;
+
+	string w, c;
+
+	getline(cin, c);
+	int x = c.length();
+	int i = 0;
+	while (x > 0)
+	{
+		if (!isempty(c[i]))
+		{
+
+			if (!isempty(c[i + 1]))
+			{
+				goto here;
+			}
+			else
+			{
+				s1.addWord(w);
+				w = "";
+			}
+		}
+		else
+			w += c[i];
+	here:
+		x--;
+		i++;
+	}
+	s1.sort();
+	s1.display();
+}
