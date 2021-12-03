@@ -1,0 +1,139 @@
+#include <iostream>
+using namespace std;
+class node {
+public:
+	int data;
+	int height;
+	int balance;
+	node* left;
+	node* right;
+	node()
+	{
+		data = NULL;
+		left = NULL;
+		right = NULL;
+	}
+	node(int a)
+	{
+		data = a;
+		left = NULL;
+		right = NULL;
+	}
+};
+class bst {
+public:
+	node* root;
+	bst()
+	{
+		root = NULL;
+	}
+	node* insert(node* a, int b)
+	{
+		if (a == NULL)
+		{
+			a = new node(b);
+		}
+		if (a->data < b)
+		{
+			a->right = insert(a->right, b);
+			a->height=height(a);
+			a->balance=a->left->height-a->right->height;
+			
+		}
+		else if (a->data > b)
+		{
+			a->left = insert(a->left, b);
+			a->height=height(a);
+		}
+		return a;
+	}
+	int height(node* root) {
+        if(root==NULL)
+            return -1;
+        else {
+            int left = height(root->left);
+            int right = height(root->right);
+            if(left>right)
+                return left+1;
+            else
+                return right+1;
+    	}
+	}
+	void inorder(node* a)
+	{
+		if (a != NULL)
+		{
+			inorder(a->left);
+			cout << a->data << " " << a->height << "  ";
+			inorder(a->right);
+		}
+	}
+};
+node* minimum(node* a)
+{
+	if (a == NULL)
+	{
+		cout << "Tree not found" << endl;
+	}
+	while (a->left != NULL)
+	{
+		a = a->left;
+	}
+	return a;
+}
+node* delnode(node* p, int key)
+{
+	if (p == NULL)
+		return p;
+	else if (key < p->data)
+	{
+		p->left = delnode(p->left, key);
+	}
+	else if (key > p->data)
+	{
+		p->right = delnode(p->right, key);
+	}
+	else
+	{
+		if (p->left == NULL && p->right == NULL)
+		{
+			delete p;
+			p = NULL;
+		}
+		else if (p->right == NULL)
+		{
+			node* x = p;
+			p = p->left;
+			delete x;
+		}
+		else if (p->left == NULL)
+		{
+			node* x = p;
+			p = p->right;
+			delete x;
+		}
+		else
+		{
+			node* x;
+			x = minimum(p->right);
+			p->data = x->data;
+			p->right = delnode(p->right, x->data);
+		}
+	}
+	return p;
+}
+int main()
+{
+	bst b;
+	b.root = b.insert(b.root, 5);
+	b.root = b.insert(b.root, 7);
+	b.root = b.insert(b.root, 19);
+	b.root = b.insert(b.root, 12);
+	b.root = b.insert(b.root, 10);
+	b.root = b.insert(b.root, 15);
+	b.root = b.insert(b.root, 18);
+	b.root = b.insert(b.root, 20);
+	b.root = b.insert(b.root, 25);
+	b.root = b.insert(b.root, 23);
+	b.inorder(b.root);
+}
